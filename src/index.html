@@ -1,11 +1,41 @@
 <!doctype html>
-<html ng-app="colorPicker">
-    <head>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
-        <script src="app.js"></script>
-        <link rel="stylesheet" href="app.css">
-    </head>
-    <body>
-        <h2>Game</h2>
-    </body>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Angular Material style sheet -->
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
+    <link rel="stylesheet" href="app.css">
+
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
+
+    <!-- Angular Material Library -->
+    <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
+
+    <script src="app.js"></script>
+</head>
+<body ng-app="colorApp">
+<md-content ng-controller="mainController" layout-fill>
+    <h1>Header Placeholder</h1>
+    <md-tabs class="md-primary" md-selected="selectedTabIndex" layout-fill>
+        <md-tab id="palette">
+            <md-tab-label>Pick Palette</md-tab-label>
+            <md-tab-body>
+                <md-content layout="column" layout-padding layout-fill>
+                    <palette-display layout="row" layout-align="start center" title="'Current Palette'" palette="currentPalette"></palette-display>
+                    <color-picker layout="row" color-space="'additive'"></color-picker>
+                </md-content>
+            </md-tab-body>
+        </md-tab>
+        <md-tab id="tab3">
+            <md-tab-label>Game</md-tab-label>
+            <md-tab-body md-padding>
+                View for Item #3 <br/>
+            </md-tab-body>
+        </md-tab>
+    </md-tabs>
+</md-content>
+</body>
 </html>

@@ -1,0 +1,20 @@
+palette-display {
+    font-size: 1.5em;
+}
+
+palette-display span {
+
+}
+
+/*.color-bubble md-tooltip {*/
+    /*font-size: .5em;*/
+/*}*/
+
+.color-bubble {
+    /*font-size: 1.5em;*/
+    border-radius: 50%;
+    width: 1.5em;
+    height: 1.5em;
+    margin-right: .3em;
+    margin-left: .3em;
+}
