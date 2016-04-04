@@ -14,9 +14,9 @@
     }
 
     function AdditiveColor(red, green, blue) {
-        this.red = red;
-        this.green = green;
-        this.blue = blue;
+        this.red = red ? red : 0;
+        this.green = green ? green : 0;
+        this.blue = blue ? blue : 0;
     }
 
     Object.defineProperty(AdditiveColor.prototype, "hex", {
@@ -40,9 +40,9 @@
     });
 
     function SubtractiveColor(cyan, magenta, yellow) {
-        this.cyan = cyan;
-        this.magenta = magenta;
-        this.yellow = yellow;
+        this.cyan = cyan ? cyan : 0;
+        this.magenta = magenta ? magenta : 0;
+        this.yellow = yellow ? yellow : 0;
     }
 
     Object.defineProperty(SubtractiveColor.prototype, "hex", {
@@ -142,13 +142,22 @@
                 title: '='
             },
             template: function () {
-                return "<span>{{ title }}:</span><div ng-repeat='color in palette' " +
-                    "class='color-bubble md-whiteframe-2dp' style='background-color: {{ color.hex }}'>" +
-                    "<md-tooltip md-direction='bottom'>{{color.shortName}}</md-tooltip></div>";
+                return "<span>{{ title }}:</span><md-button ng-repeat='color in palette' ng-click='remove($index)'" +
+                    "class='md-fab color-bubble' style='background-color: {{ color.hex }}'>" +
+                    "<md-icon class='material-icons'>remove</md-icon>" +
+                    "<md-tooltip md-direction='bottom'>{{color.shortName}}</md-tooltip>" +
+                    "</md-button>";
             },
             link: function (scope, element) {
                 // element.addClass('');
                 element.attr('layout="row"');
+
+                console.log('Doing stuff');
+
+                scope.remove = function (index) {
+                    console.log('Deleting stuff');
+                    scope.palette.splice(index, 1);
+                }
             }
         }
     }
@@ -210,11 +219,14 @@
                     "   <md-button ng-click='addUnitOfColor($index)' class='md-fab'" +
                     "           ng-repeat='color in palette' style='background-color: {{ color.hex }}'> " +
                     "       <md-icon class='material-icons'>add</md-icon> </md-button>" +
-                    "   <md-button class='md-primary md-raised' ng-click='resetColors()'>Reset</md-button>" +
                     "</div>" +
                     "<div class='additive-slider-container' ng-show='colorSpace === \"additive\"'>" +
                     "   <md-slider ng-repeat='color in palette' style='background-color: {{ color.hex }}'" +
                     "           step='.005' min='0' max='1' ng-model='mixedColor.weights[$index]'></md-slider> " +
+                    "</div>" +
+                    "<div>" +
+                    "   <md-button class='md-primary md-raised' ng-click='resetColors()'>Reset</md-button>" +
+                    "   <md-button class='md-raised' ng-click='addToPalette()'>Add to Palette</md-button>" +
                     "</div>";
             },
             link: function (scope, element) {
@@ -235,6 +247,10 @@
                 scope.$watch('colorSpace', function () {
                     scope.mixedColor = new MixedColor(scope.palette, scope.colorSpace);
                 });
+
+                scope.addToPalette = function () {
+                    scope.palette.push(angular.copy(scope.mixedColor.result));
+                }
             }
         };
     }
@@ -248,6 +264,10 @@
             green += Math.round(color.green * weights[i]);
             blue += Math.round(color.blue * weights[i]);
         }
+
+        red = Math.min(red, 255);
+        green = Math.min(green, 255);
+        blue = Math.min(blue, 255);
 
         return new AdditiveColor(red, green, blue);
     }

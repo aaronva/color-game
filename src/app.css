@@ -24,6 +24,22 @@ palette-display span {
     margin: .3em;
 }
 
+md-button.color-bubble {
+    /*font-size: 1.5em;*/
+    border-radius: inherit;
+    width: inherit;
+    height: inherit;
+    margin: 5em;
+}
+
+.color-bubble md-icon {
+    visibility: hidden;
+}
+
+.color-bubble:hover md-icon {
+    visibility: visible;
+}
+
 .color-box {
     width: 100%;
     flex: 1;
