@@ -4,6 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Angular Material style sheet -->
     <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="app.css">
 
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
@@ -24,15 +25,16 @@
             <md-tab-label>Pick Palette</md-tab-label>
             <md-tab-body>
                 <md-content layout="column" layout-padding layout-fill>
-                    <palette-display layout="row" layout-align="start center" title="'Current Palette'" palette="currentPalette"></palette-display>
+                    <palette-display layout="row" layout-align="start center" title="'Current Palette'"
+                                     palette="currentPalette"></palette-display>
                     <color-picker layout="row" color-space="'additive'"></color-picker>
                 </md-content>
             </md-tab-body>
         </md-tab>
         <md-tab id="tab3">
-            <md-tab-label>Game</md-tab-label>
+            <md-tab-label>Mixer</md-tab-label>
             <md-tab-body md-padding>
-                View for Item #3 <br/>
+                <color-mixer color-space="currentColorSpace" palette="currentPalette"></color-mixer>
             </md-tab-body>
         </md-tab>
     </md-tabs>

@@ -18,3 +18,18 @@ palette-display span {
     margin-right: .3em;
     margin-left: .3em;
 }
+
+.color-box {
+    width: 100%;
+    flex: 1;
+    min-height: 500px;
+}
+
+.percent-color-line {
+    height: 5px;
+    width: 100%;
+}
+
+/*.additive-slider-container md-slider .md-track.md-track-fill {*/
+    /*background-color: inherit;*/
+/*}*/
