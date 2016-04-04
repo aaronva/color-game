@@ -27,13 +27,29 @@
                 <md-content layout="column" layout-padding layout-fill>
                     <div layout="row">
                         <palette-display layout="row" layout-align="start center" title="'Current Palette'"
-                                         palette="currentPalette"></palette-display>
+                                         palette="currentPalette" editable="'true'"></palette-display>
                         <md-select ng-model="currentColorSpace">
                             <md-option value="additive"> Additive</md-option>
                             <md-option value="subtractive"> Subtractive</md-option>
                         </md-select>
                     </div>
-                    <color-picker layout="column" color-space="currentColorSpace" save-color='addColorToPalette(color)'"></color-picker>
+                    <color-picker layout="column" color-space="currentColorSpace"
+                                  save-color='addColorToPalette(color)'></color-picker>
+                    <md-list flex>
+                        <!--<md-subheader class="md-no-sticky">3 line item (with hover)</md-subheader>-->
+                        <md-list-item ng-repeat="paletteContainer in premadePalettes"
+                                      ng-click="selectPremadePalette($index)">
+                            <!--<div></div>-->
+                            <palette-display layout="row" layout-align="start center" title="paletteContainer.name"
+                                             palette="paletteContainer.palette"></palette-display>
+                            <!--<img ng-src="{{item.face}}?{{$index}}" class="md-avatar" alt="{{item.who}}"/>-->
+                            <!--<div class="md-list-item-text" layout="column">-->
+                                <!--<h3>{{ item.who }}</h3>-->
+                                <!--<h4>{{ item.what }}</h4>-->
+                                <!--<p>{{ item.notes }}</p>-->
+                            <!--</div>-->
+                        </md-list-item>
+                    </md-list>
                 </md-content>
             </md-tab-body>
         </md-tab>
@@ -46,7 +62,14 @@
         <md-tab id="game">
             <md-tab-label>Game</md-tab-label>
             <md-tab-body md-padding>
-                <mixing-game></mixing-game>
+                <md-select ng-model="gameDifficulty">
+                    <md-option value="0"> Easy</md-option>
+                    <md-option value="1"> Medium</md-option>
+                    <md-option value="2"> Hard</md-option>
+                    <md-option value="3"> Very Hard</md-option>
+                </md-select>
+                <mixing-game palette="currentPalette" color-space="currentColorSpace"
+                             difficulty="gameDifficulty"></mixing-game>
                 <!--<color-mixer color-space="currentColorSpace" palette="currentPalette"></color-mixer>-->
             </md-tab-body>
         </md-tab>

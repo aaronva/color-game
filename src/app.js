@@ -4,9 +4,9 @@
         .config(config)
         .controller('mainController', mainController)
         .directive('colorPicker', colorPicker)
-        .directive('paletteDisplay', paletteDisplay)
-        .directive('colorMixer', colorMixer)
-        .directive('mixingGame', mixingGame);
+        .directive('paletteDisplay', paletteDisplayDirective)
+        .directive('colorMixer', colorMixerDirective)
+        .directive('mixingGame', mixingGameDirective);
 
     function config($mdThemingProvider) {
         $mdThemingProvider.theme('default')
@@ -66,15 +66,121 @@
         }
     });
 
+    function premadeAdditivePalettes() {
+        var premadePalettes = [];
+
+        var primaryPalette = {
+            name: 'Primary Colors',
+            description: 'These are the primary colors that can be used to create any color in additive space',
+            palette: []
+        };
+
+        primaryPalette.palette.push(new AdditiveColor(255, 0, 0));
+        primaryPalette.palette.push(new AdditiveColor(0, 255, 0));
+        primaryPalette.palette.push(new AdditiveColor(0, 0, 255));
+
+        premadePalettes.push(primaryPalette);
+
+        var whiteTintedLight = {
+            name: 'Mostly White Light',
+            // description: 'These are the primary colors that can be used to create any color in additive space',
+            palette: []
+        };
+
+        whiteTintedLight.palette.push(new AdditiveColor(255, 150, 150));
+        whiteTintedLight.palette.push(new AdditiveColor(150, 255, 150));
+        whiteTintedLight.palette.push(new AdditiveColor(150, 150, 255));
+
+        premadePalettes.push(whiteTintedLight);
+
+        var noBlueLight = {
+            name: 'No Pure Blue Light',
+            // description: 'These are the primary colors that can be used to create any color in additive space',
+            palette: []
+        };
+
+        noBlueLight.palette.push(new AdditiveColor(255, 0, 0));
+        noBlueLight.palette.push(new AdditiveColor(0, 255, 0));
+        noBlueLight.palette.push(new AdditiveColor(0, 255, 150));
+        noBlueLight.palette.push(new AdditiveColor(255, 0, 150));
+
+        premadePalettes.push(noBlueLight);
+
+
+        return premadePalettes;
+    }
+
+    function premadeSubtractivePalettes() {
+        var premadePalettes = [];
+
+        var primaryPalette = {
+            name: 'Primary Colors',
+            description: 'These are the primary colors that can be used to create any color in subtractive space',
+            palette: []
+        };
+
+        primaryPalette.palette.push(new SubtractiveColor(1, 0, 0));
+        primaryPalette.palette.push(new SubtractiveColor(0, 1, 0));
+        primaryPalette.palette.push(new SubtractiveColor(0, 0, 1));
+        premadePalettes.push(primaryPalette);
+
+        var primaryPalettePlusBlack = {
+            name: 'CMYK',
+            description: 'This is the standard primary set with the addition of black',
+            palette: []
+        };
+
+        primaryPalettePlusBlack.palette.push(new SubtractiveColor(1, 0, 0));
+        primaryPalettePlusBlack.palette.push(new SubtractiveColor(0, 1, 0));
+        primaryPalettePlusBlack.palette.push(new SubtractiveColor(0, 0, 1));
+        primaryPalettePlusBlack.palette.push(new SubtractiveColor(0, 0, 0));
+        premadePalettes.push(primaryPalettePlusBlack);
+
+        var classicPaintersPalette = {
+            name: 'Split Primary Palette',
+            // description: 'This is a standard painter\'s palette from before magenta was easily processed',
+            palette: []
+        };
+
+        classicPaintersPalette.palette.push(new SubtractiveColor(0, 0.05, 1)); // Warm Yellow
+        classicPaintersPalette.palette.push(new SubtractiveColor(.1, 0, 1)); // Cadmium Yellow
+        classicPaintersPalette.palette.push(new SubtractiveColor(0, 1, .80)); // Warm Red
+        classicPaintersPalette.palette.push(new SubtractiveColor(0, .80, 1)); // Cool Red
+        classicPaintersPalette.palette.push(new SubtractiveColor(0.7, 1, 0)); // Warm Blue
+        classicPaintersPalette.palette.push(new SubtractiveColor(1, 0.7, 0)); // Cool Blue
+        premadePalettes.push(classicPaintersPalette);
+
+        return premadePalettes;
+    }
+
     function mainController($scope) {
+        var premadePalettes = {
+            additive: premadeAdditivePalettes(),
+            subtractive: premadeSubtractivePalettes()
+        };
+
         $scope.selectedTabIndex = 0;
 
         $scope.currentPalette = [];
         $scope.currentColorSpace = 'subtractive';
 
-        $scope.$watch('currentColorSpace', function () {
+        $scope.$watch('currentColorSpace', function (value) {
             $scope.currentPalette = [];
+
+            $scope.premadePalettes = premadePalettes[$scope.currentColorSpace];
         });
+
+        $scope.selectPremadePalette = function (index) {
+            $scope.currentPalette.splice(0, $scope.currentPalette.length);
+            // $scope.currentPalette.concat(angular.copy($scope.premadePalettes[index].palette));
+            for (var i = 0; i < $scope.premadePalettes[index].palette.length; i++) {
+                $scope.currentPalette.push($scope.premadePalettes[index].palette[i]);
+            }
+        };
+
+        $scope.premadePalettes = premadePalettes[$scope.currentColorSpace];
+
+        $scope.gameDifficulty = 1;
 
         $scope.addColorToPalette = function (color) {
             $scope.currentPalette.push(color);
@@ -135,15 +241,19 @@
         }
     }
 
-    function paletteDisplay() {
+    function paletteDisplayDirective() {
         return {
             restrict: 'E',
             scope: {
                 palette: '=',
-                title: '='
+                title: '=',
+                editable: '=?'
             },
             template: function () {
-                return "<span>{{ title }}:</span><md-button ng-repeat='color in palette' ng-click='remove($index)'" +
+                return "<span>{{ title }}:</span>" +
+                    "<div ng-hide='editable' class='color-bubble md-whiteframe-2dp' style='background-color: {{ color.hex }}'" +
+                    "ng-repeat='color in palette'></div>" +
+                    "<md-button ng-show='editable' ng-repeat='color in palette' ng-click='remove($index)' " +
                     "class='md-fab color-bubble' style='background-color: {{ color.hex }}'>" +
                     "<md-icon class='material-icons'>remove</md-icon>" +
                     "<md-tooltip md-direction='bottom'>{{color.shortName}}</md-tooltip>" +
@@ -153,8 +263,6 @@
                 // element.addClass('');
                 element.attr('layout="row"');
 
-                console.log('Doing stuff');
-
                 scope.remove = function (index) {
                     console.log('Deleting stuff');
                     scope.palette.splice(index, 1);
@@ -163,21 +271,70 @@
         }
     }
 
+    function gcd(a, b) {
+        return !b ? a : gcd(b, a % b);
+    }
+
     function MixedColor(palette, colorSpace) {
         this.palette = palette;
         this.colorSpace = colorSpace;
+        this.weightsSum = 0;
 
-        this.addUnitOfColor = function (index) {
-            this.weights[index]++;
+        this.addUnitOfColor = function (index, units) {
+            if (units === undefined)
+                units = 1;
+
+            this.weightsSum += units;
+            this.weights[index] += units;
         };
 
-        this.removeUnitOfColor = function (index) {
-            this.weights[index] = Math.max(this.weights[index] - 1, 0);
+        this.removeUnitOfColor = function (index, units) {
+            if (units === undefined)
+                units = 1;
+
+            this.weights[index] -= units;
+            this.weightsSum -= units;
+
+            if (this.weights[index] < 0)
+                this.addUnitOfColor(index, 0 - this.weights[index]);
+
         };
 
         this.resetColors = function () {
             this.weights = [];
             for (var i = 0; i < palette.length; i++) this.weights.push(0);
+        };
+
+        // this.reduce = function () {
+        //     var i;
+        //
+        //     var weightsGdc = this.weightsSum;
+        //
+        //     for (i = 0; i < this.weights.length; i++) {
+        //         weightsGdc = gcd(this.weights[i], weightsGdc);
+        //     }
+        // };
+
+        this.difference = function (other) {
+            // Assumes same palette
+            var weightsDifference = [], i;
+
+            for (i = 0; i < this.palette.length; i++) {
+                weightsDifference.push(this.weights[i] - other.weights[i]);
+            }
+
+            return weightsDifference;
+        };
+
+        this.similarity = function (other) {
+            // Assumes same palette
+            var weightsDifference = [], i, absoluteDifference = 0;
+
+            for (i = 0; i < this.palette.length; i++) {
+                absoluteDifference += Math.abs(this.weights[i] - other.weights[i]);
+            }
+
+            return absoluteDifference / this.weightsSum;
         };
 
         this.resetColors();
@@ -200,20 +357,22 @@
         }
     });
 
-    function colorMixer() {
+    function colorMixerDirective() {
         return {
             restrict: 'E',
             scope: {
                 targetColor: '=?',
+                mixedColor: '=?',
                 palette: '=',
                 colorSpace: '='
             },
             template: function () {
-                return "<div>" +
-                    "   <div class='color-box' style='background-color: {{ mixedColor.hex }}'>" +
+                return "<div layout='row'>" +
+                    "   <div flex class='color-box' style='background-color: {{ mixedColor.hex }}'>" +
                     "       <div ng-hide='targetColor' class='color-indicator' ng-show='mixedColor'>{{mixedColor.result.shortName}}</div>" +
                     "   </div>" +
-                    // "   <div></div>" +
+                    "   <div flex class='color-box' ng-show='targetColor' style='background-color: {{ targetColor.hex }}'>" +
+                    "   </div>" +
                     "</div>" +
                     "<div class='percent-color-line' layout='row' ng-show='colorSpace === \"subtractive\"' >" +
                     "   <div style='background-color: {{ color.hex }}; flex: {{ mixedColor.weights[$index] }}'" +
@@ -297,17 +456,139 @@
         return new SubtractiveColor(cyan, magenta, yellow);
     }
 
-    function mixingGame() {
+    function mixingGameDirective() {
         return {
             restrict: 'E',
             scope: {
                 palette: '=',
-                colorSpace: '='
+                colorSpace: '=',
+                difficulty: '='
             },
-            template: "<",
+            template: "<color-mixer target-color='targetColor' mixed-color='mixedColor' palette='palette' color-space='colorSpace'></color-mixer>" +
+            "<md-button class='md-raised' ng-click='newTarget()'>New Target</md-button>",
             link: function (scope) {
+                scope.targetColor = generateTarget(scope.palette, scope.colorSpace, scope.difficulty);
 
+                scope.newTarget = function () {
+                    scope.targetColor = generateTarget(scope.palette, scope.colorSpace, scope.difficulty);
+                };
+
+                scope.$watch('palette.length', function () {
+                    scope.targetColor = generateTarget(scope.palette, scope.colorSpace, scope.difficulty);
+                });
+
+                scope.$watch('difficulty', function (value) {
+                    scope.targetColor = generateTarget(scope.palette, scope.colorSpace, scope.difficulty);
+                })
             }
         }
     }
+
+    function generateTarget(palette, colorSpace, difficulty) {
+        if (!palette.length)
+            return null;
+
+        if (colorSpace === 'subtractive')
+            return generateSubtractiveTarget(palette, difficulty);
+        if (colorSpace === 'additive')
+            return generateAdditiveTarget(palette, difficulty);
+
+        return null;
+    }
+
+    function generateSubtractiveTarget(palette, difficulty) {
+        const difficultyGrid = [
+            {
+                minAllocations: 2,
+                maxAllocations: 2
+            },
+            {
+                minAllocations: 3,
+                maxAllocations: 4
+            },
+            {
+                minAllocations: 4,
+                maxAllocations: 7
+            },
+            {
+                minAllocations: 6,
+                maxAllocations: 10
+            }
+        ];
+
+
+        const minAllocations = difficultyGrid[difficulty].minAllocations;
+        const maxAllocations = difficultyGrid[difficulty].maxAllocations;
+
+        var startingAllocationUnits = Math.round((maxAllocations - minAllocations + 1) * Math.random() + minAllocations);
+        var allocationUnit = startingAllocationUnits;
+        var i, random, units;
+
+        var mixer = new MixedColor(palette, 'subtractive');
+
+        for (i = 0; i < palette.length - 1; i++) {
+            random = Math.random() * .8;
+            units = Math.min(Math.round(startingAllocationUnits * random), allocationUnit);
+            if (units === startingAllocationUnits) units--;
+            mixer.addUnitOfColor(i, units);
+            allocationUnit -= units;
+        }
+
+        if (allocationUnit === startingAllocationUnits) // If we failed to allocate any units, repeat
+            return generateSubtractiveTarget(palette, difficulty);
+
+        mixer.addUnitOfColor(palette.length - 1, allocationUnit); // Add remaining units to last color.
+
+        return mixer;
+    }
+
+    function generateAdditiveTarget(palette, difficulty) {
+        const difficultyGrid = [
+            {
+                denominator: 1,
+                bonusSkipChance: .3
+            },
+            {
+                denominator: 2,
+                bonusSkipChance: .4
+            },
+            {
+                denominator: 6,
+                bonusSkipChance: .3
+            },
+            {
+                denominator: 10,
+                bonusSkipChance: .2
+            }
+        ];
+
+        const denominator = difficultyGrid[difficulty].denominator;
+        const bonusSkipChance = difficultyGrid[difficulty].bonusSkipChance;
+
+        var numerator, i, units, isBlack = true;
+
+        var mixer = new MixedColor(palette, 'additive');
+
+        for (i = 0; i < palette.length; i++) {
+            if (Math.random() < bonusSkipChance) continue;
+
+            numerator = Math.round((denominator + 1) * Math.random());
+
+            units = numerator / denominator;
+
+            isBlack = units > 0 ? false : isBlack;
+
+            mixer.addUnitOfColor(i, units);
+        }
+
+        if (isBlack) return generateAdditiveTarget(palette, difficulty); // Don't return absolute black
+
+        return mixer;
+    }
+
 })();
+
+
+
+
+
