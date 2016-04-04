@@ -7,7 +7,7 @@ palette-display span {
 }
 
 /*.color-bubble md-tooltip {*/
-    /*font-size: .5em;*/
+/*font-size: .5em;*/
 /*}*/
 
 .color-bubble {
@@ -30,6 +30,15 @@ palette-display span {
     width: 100%;
 }
 
+.color-indicator {
+    font-size: 1.3em;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
 /*.additive-slider-container md-slider .md-track.md-track-fill {*/
-    /*background-color: inherit;*/
+/*background-color: inherit;*/
 /*}*/

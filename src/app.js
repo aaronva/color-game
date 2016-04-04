@@ -58,9 +58,9 @@
     Object.defineProperty(SubtractiveColor.prototype, "shortName", {
         get: function () {
             var color = "";
-            color += "C:" + this.cyan + " ";
-            color += "M:" + this.magenta + " ";
-            color += "Y:" + this.yellow;
+            color += "C:" + this.cyan.toFixed(2) + " ";
+            color += "M:" + this.magenta.toFixed(2) + " ";
+            color += "Y:" + this.yellow.toFixed(2);
             return color;
         }
     });
@@ -74,6 +74,7 @@
         $scope.currentPalette.push(new SubtractiveColor(1, 0, 0));
         $scope.currentPalette.push(new SubtractiveColor(0, 1, 0));
         $scope.currentPalette.push(new SubtractiveColor(0, 0, 1));
+        $scope.currentPalette.push(new SubtractiveColor(0, .5, .5));
     }
 
     function colorPicker() {
@@ -156,7 +157,9 @@
                 colorSpace: '='
             },
             template: function () {
-                return "<div class='color-box' style='background-color: {{ mixedColor.hex }}'></div>" +
+                return "<div class='color-box' style='background-color: {{ mixedColor.hex }}'>" +
+                    "   <div class='color-indicator' ng-show='mixedColor'>{{mixedColor.result.shortName}}</div>" +
+                    "</div>" +
                     "<div class='percent-color-line' layout='row' ng-show='colorSpace === \"subtractive\"' >" +
                     "   <div style='background-color: {{ color.hex }}; flex: {{ mixedColor.weights[$index] }}'" +
                     "           ng-repeat='color in palette'></div>" +
