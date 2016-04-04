@@ -5,7 +5,8 @@
         .controller('mainController', mainController)
         .directive('colorPicker', colorPicker)
         .directive('paletteDisplay', paletteDisplay)
-        .directive('colorMixer', colorMixer);
+        .directive('colorMixer', colorMixer)
+        .directive('mixingGame', mixingGame);
 
     function config($mdThemingProvider) {
         $mdThemingProvider.theme('default')
@@ -208,8 +209,11 @@
                 colorSpace: '='
             },
             template: function () {
-                return "<div class='color-box' style='background-color: {{ mixedColor.hex }}'>" +
-                    "   <div class='color-indicator' ng-show='mixedColor'>{{mixedColor.result.shortName}}</div>" +
+                return "<div>" +
+                    "   <div class='color-box' style='background-color: {{ mixedColor.hex }}'>" +
+                    "       <div ng-hide='targetColor' class='color-indicator' ng-show='mixedColor'>{{mixedColor.result.shortName}}</div>" +
+                    "   </div>" +
+                    // "   <div></div>" +
                     "</div>" +
                     "<div class='percent-color-line' layout='row' ng-show='colorSpace === \"subtractive\"' >" +
                     "   <div style='background-color: {{ color.hex }}; flex: {{ mixedColor.weights[$index] }}'" +
@@ -226,7 +230,7 @@
                     "</div>" +
                     "<div>" +
                     "   <md-button class='md-primary md-raised' ng-click='resetColors()'>Reset</md-button>" +
-                    "   <md-button class='md-raised' ng-click='addToPalette()'>Add to Palette</md-button>" +
+                    "   <md-button ng-hide='targetColor' class='md-raised' ng-click='addToPalette()'>Add to Palette</md-button>" +
                     "</div>";
             },
             link: function (scope, element) {
@@ -291,5 +295,19 @@
         yellow = yellow / totalWeights;
 
         return new SubtractiveColor(cyan, magenta, yellow);
+    }
+
+    function mixingGame() {
+        return {
+            restrict: 'E',
+            scope: {
+                palette: '=',
+                colorSpace: '='
+            },
+            template: "<",
+            link: function (scope) {
+
+            }
+        }
     }
 })();
