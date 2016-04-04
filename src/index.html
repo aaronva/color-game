@@ -25,9 +25,15 @@
             <md-tab-label>Pick Palette</md-tab-label>
             <md-tab-body>
                 <md-content layout="column" layout-padding layout-fill>
-                    <palette-display layout="row" layout-align="start center" title="'Current Palette'"
-                                     palette="currentPalette"></palette-display>
-                    <color-picker layout="row" color-space="'additive'"></color-picker>
+                    <div layout="row">
+                        <palette-display layout="row" layout-align="start center" title="'Current Palette'"
+                                         palette="currentPalette"></palette-display>
+                        <md-select ng-model="currentColorSpace">
+                            <md-option value="additive"> Additive</md-option>
+                            <md-option value="subtractive"> Subtractive</md-option>
+                        </md-select>
+                    </div>
+                    <color-picker layout="column" color-space="currentColorSpace" save-color='addColorToPalette(color)'"></color-picker>
                 </md-content>
             </md-tab-body>
         </md-tab>

@@ -10,13 +10,18 @@ palette-display span {
 /*font-size: .5em;*/
 /*}*/
 
+.color-bubble .large {
+    width: 3em;
+    height: 3em;
+    margin: .6em;
+}
+
 .color-bubble {
     /*font-size: 1.5em;*/
     border-radius: 50%;
     width: 1.5em;
     height: 1.5em;
-    margin-right: .3em;
-    margin-left: .3em;
+    margin: .3em;
 }
 
 .color-box {

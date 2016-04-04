@@ -71,20 +71,65 @@
         $scope.currentPalette = [];
         $scope.currentColorSpace = 'subtractive';
 
-        $scope.currentPalette.push(new SubtractiveColor(1, 0, 0));
-        $scope.currentPalette.push(new SubtractiveColor(0, 1, 0));
-        $scope.currentPalette.push(new SubtractiveColor(0, 0, 1));
-        $scope.currentPalette.push(new SubtractiveColor(0, .5, .5));
+        $scope.$watch('currentColorSpace', function () {
+            $scope.currentPalette = [];
+        });
+
+        $scope.addColorToPalette = function (color) {
+            $scope.currentPalette.push(color);
+        }
     }
 
     function colorPicker() {
         return {
             restrict: 'E',
             scope: {
-                colorSpace: '='
+                colorSpace: '=',
+                saveColor: '&'
             },
             template: function () {
-                return "<div>Color Picker</div>";
+                return "<div>Color Picker</div>" +
+                    "<div class='md-whiteframe-2dp large color-bubble' style='background-color: {{color.hex}}'></div>" +
+                    "<div ng-show='colorSpace === \"additive\"' layout='row'>" +
+                    "   <md-input-container flex> " +
+                    "       <label>Red</label> <input ng-model='color.red' type='number' min='0' max='255' step='5'> " +
+                    "   </md-input-container>" +
+                    "   <md-input-container flex> " +
+                    "       <label>Green</label> <input ng-model='color.green' type='number' min='0' max='255' step='5'> " +
+                    "   </md-input-container>" +
+                    "   <md-input-container flex> " +
+                    "       <label>Blue</label> <input ng-model='color.blue' type='number' min='0' max='255' step='5'> " +
+                    "   </md-input-container>" +
+                    "</div>" +
+                    "<div ng-show='colorSpace === \"subtractive\"' layout='row'>" +
+                    "   <md-input-container flex> " +
+                    "       <label>Cyan</label> <input ng-model='color.cyan' type='number' min='0' max='1' step='0.05'>" +
+                    "   </md-input-container>" +
+                    "   <md-input-container flex> " +
+                    "       <label>Magenta</label> <input ng-model='color.magenta' type='number' min='0' max='1' step='0.05'>" +
+                    "   </md-input-container>" +
+                    "   <md-input-container flex> " +
+                    "       <label>Yellow</label> <input ng-model='color.yellow' type='number' min='0' max='1' step='0.05'>" +
+                    "   </md-input-container>" +
+                    "</div>" +
+                    "<md-button class='md-primary md-raised' ng-click='add()'>Add</md-button>";
+            },
+            link: function (scope) {
+                scope.$watch('colorSpace', function (colorSpace) {
+                    if (colorSpace === 'additive')
+                        scope.color = new AdditiveColor(0, 0, 0);
+                    if (colorSpace === 'subtractive')
+                        scope.color = new SubtractiveColor(0, 0, 0);
+                });
+
+                scope.add = function () {
+                    scope.saveColor({color: scope.color});
+                    if (scope.colorSpace === 'additive')
+                        scope.color = new AdditiveColor(0, 0, 0);
+                    if (scope.colorSpace === 'subtractive')
+                        scope.color = new SubtractiveColor(0, 0, 0);
+                }
+
             }
         }
     }
@@ -104,9 +149,6 @@
             link: function (scope, element) {
                 // element.addClass('');
                 element.attr('layout="row"');
-
-                console.log(scope);
-                console.log(scope.palette[0].hex);
             }
         }
     }
@@ -186,7 +228,13 @@
                     scope.mixedColor.resetColors();
                 };
 
-                console.log(scope.mixedColor);
+                scope.$watch('palette.length', function () {
+                    scope.mixedColor.resetColors();
+                });
+
+                scope.$watch('colorSpace', function () {
+                    scope.mixedColor = new MixedColor(scope.palette, scope.colorSpace);
+                });
             }
         };
     }
