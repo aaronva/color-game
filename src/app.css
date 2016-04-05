@@ -1,3 +1,25 @@
+#main-content {
+    height: 80%;
+    max-width: 1200px;
+    width: 800%;
+}
+
+#main-content md-tab {
+    height: 800px;
+}
+
+md-tab-content > div {
+    height: 100%;
+}
+
+color-mixer {
+    height: 100%;
+}
+
+mixing-game color-mixer {
+    height: inherit;
+}
+
 palette-display {
     font-size: 1.5em;
 }
@@ -9,6 +31,10 @@ palette-display span {
 /*.color-bubble md-tooltip {*/
 /*font-size: .5em;*/
 /*}*/
+
+#background  {
+    background-color: #a0a0a0;
+}
 
 .color-bubble .large {
     width: 3em;
@@ -40,14 +66,22 @@ md-button.color-bubble {
     visibility: visible;
 }
 
+.layout-padding > .color-box-container {
+    padding-bottom: 0;
+}
+
 .color-box {
     width: 100%;
     flex: 1;
-    min-height: 500px;
+    min-height: 300px;
+    padding-bottom: 0;
 }
 
 .percent-color-line {
+    min-height: 5px;
     height: 5px;
+    padding-top: 0;
+    padding-bottom: 0;
     width: 100%;
 }
 
@@ -58,6 +92,10 @@ md-button.color-bubble {
     right: 0;
     background-color: rgba(0, 0, 0, 0.2);
     color: white;
+}
+
+.failed-match {
+    color: lightgray;
 }
 
 /*.additive-slider-container md-slider .md-track.md-track-fill {*/

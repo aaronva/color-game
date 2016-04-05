@@ -17,9 +17,9 @@
 
     <script src="app.js"></script>
 </head>
-<body ng-app="colorApp">
-<md-content ng-controller="mainController" layout-fill>
-    <h1>Header Placeholder</h1>
+<body id="background" ng-app="colorApp" layout="column" layout-align="center center">
+<!--<h1>Header Placeholder</h1>-->
+<md-content id="main-content" class="md-whiteframe-5dp" ng-controller="mainController">
     <md-tabs class="md-primary" md-selected="selectedTabIndex" layout-fill>
         <md-tab id="palette">
             <md-tab-label>Pick Palette</md-tab-label>
@@ -36,41 +36,29 @@
                     <color-picker layout="column" color-space="currentColorSpace"
                                   save-color='addColorToPalette(color)'></color-picker>
                     <md-list flex>
-                        <!--<md-subheader class="md-no-sticky">3 line item (with hover)</md-subheader>-->
                         <md-list-item ng-repeat="paletteContainer in premadePalettes"
                                       ng-click="selectPremadePalette($index)">
-                            <!--<div></div>-->
                             <palette-display layout="row" layout-align="start center" title="paletteContainer.name"
                                              palette="paletteContainer.palette"></palette-display>
-                            <!--<img ng-src="{{item.face}}?{{$index}}" class="md-avatar" alt="{{item.who}}"/>-->
-                            <!--<div class="md-list-item-text" layout="column">-->
-                                <!--<h3>{{ item.who }}</h3>-->
-                                <!--<h4>{{ item.what }}</h4>-->
-                                <!--<p>{{ item.notes }}</p>-->
-                            <!--</div>-->
                         </md-list-item>
                     </md-list>
                 </md-content>
             </md-tab-body>
         </md-tab>
-        <md-tab id="mixer">
+        <md-tab id="mixer" ng-disabled="!currentPalette.length">
             <md-tab-label>Mixer</md-tab-label>
             <md-tab-body md-padding>
-                <color-mixer color-space="currentColorSpace" palette="currentPalette"></color-mixer>
+                <color-mixer layout-padding layout-fill layout="column" color-space="currentColorSpace"
+                             palette="currentPalette"></color-mixer>
             </md-tab-body>
         </md-tab>
-        <md-tab id="game">
+        <md-tab id="game" ng-disabled="!currentPalette.length">
             <md-tab-label>Game</md-tab-label>
-            <md-tab-body md-padding>
-                <md-select ng-model="gameDifficulty">
-                    <md-option value="0"> Easy</md-option>
-                    <md-option value="1"> Medium</md-option>
-                    <md-option value="2"> Hard</md-option>
-                    <md-option value="3"> Very Hard</md-option>
-                </md-select>
-                <mixing-game palette="currentPalette" color-space="currentColorSpace"
-                             difficulty="gameDifficulty"></mixing-game>
-                <!--<color-mixer color-space="currentColorSpace" palette="currentPalette"></color-mixer>-->
+            <md-tab-body>
+                <div layout="column" layout-padding layout-fill>
+                    <mixing-game flex layout="column" palette="currentPalette" color-space="currentColorSpace"
+                                 difficulty="gameDifficulty"></mixing-game>
+                </div>
             </md-tab-body>
         </md-tab>
     </md-tabs>

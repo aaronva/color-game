@@ -18,6 +18,17 @@
         this.red = red ? red : 0;
         this.green = green ? green : 0;
         this.blue = blue ? blue : 0;
+
+
+        this.percMatch = function (other) {
+            var absDiff = 0;
+
+            absDiff += Math.abs(this.red - other.red);
+            absDiff += Math.abs(this.green - other.green);
+            absDiff += Math.abs(this.blue - other.blue);
+
+            return 1 - absDiff / (255 * 3);
+        }
     }
 
     Object.defineProperty(AdditiveColor.prototype, "hex", {
@@ -44,6 +55,16 @@
         this.cyan = cyan ? cyan : 0;
         this.magenta = magenta ? magenta : 0;
         this.yellow = yellow ? yellow : 0;
+
+        this.percMatch = function (other) {
+            var absDiff = 0;
+
+            absDiff += Math.abs(this.cyan - other.cyan);
+            absDiff += Math.abs(this.magenta - other.magenta);
+            absDiff += Math.abs(this.yellow - other.yellow);
+
+            return 1 - absDiff / 3;
+        }
     }
 
     Object.defineProperty(SubtractiveColor.prototype, "hex", {
@@ -133,7 +154,7 @@
         primaryPalettePlusBlack.palette.push(new SubtractiveColor(1, 0, 0));
         primaryPalettePlusBlack.palette.push(new SubtractiveColor(0, 1, 0));
         primaryPalettePlusBlack.palette.push(new SubtractiveColor(0, 0, 1));
-        primaryPalettePlusBlack.palette.push(new SubtractiveColor(0, 0, 0));
+        primaryPalettePlusBlack.palette.push(new SubtractiveColor(1, 1, 1));
         premadePalettes.push(primaryPalettePlusBlack);
 
         var classicPaintersPalette = {
@@ -367,7 +388,7 @@
                 colorSpace: '='
             },
             template: function () {
-                return "<div layout='row'>" +
+                return "<div class='color-box-container' layout='row' flex>" +
                     "   <div flex class='color-box' style='background-color: {{ mixedColor.hex }}'>" +
                     "       <div ng-hide='targetColor' class='color-indicator' ng-show='mixedColor'>{{mixedColor.result.shortName}}</div>" +
                     "   </div>" +
@@ -464,22 +485,57 @@
                 colorSpace: '=',
                 difficulty: '='
             },
-            template: "<color-mixer target-color='targetColor' mixed-color='mixedColor' palette='palette' color-space='colorSpace'></color-mixer>" +
-            "<md-button class='md-raised' ng-click='newTarget()'>New Target</md-button>",
+            template: "<div layout='row' layout-align='begin center'>" +
+            // "   <label>Difficulty:</label>" +
+            "   <md-input-container flex='60'>" +
+            "       <label>Difficulty</label>" +
+            "       <md-select ng-model='difficulty'> " +
+            "           <md-option value='0'> Easy</md-option> " +
+            "          <md-option value='1'> Medium</md-option> " +
+            "           <md-option value='2'> Hard</md-option> " +
+            "           <md-option value='3'> Very Hard</md-option> " +
+            "      </md-select>" +
+            "   </md-input-container>" +
+            "   <span style='min-width: 6em;'>" +
+            "       <span>Match: </span>" +
+            "       <span ng-show='score() <= minThreshold' class='failed-match'>???</span>" +
+            "       <span ng-hide='score() <= minThreshold'>{{ score() | number:2 }}%</span>" +
+            "   </span>" +
+            "   <md-button flex class='md-raised' ng-click='newTarget()'>New Target</md-button>" +
+            "</div>" +
+            "<color-mixer layout='column' flex target-color='targetColor' mixed-color='mixedColor' palette='palette' color-space='colorSpace'></color-mixer>",
             link: function (scope) {
+                const threshold = [
+                    50,
+                    80,
+                    90,
+                    99
+                ];
+
                 scope.targetColor = generateTarget(scope.palette, scope.colorSpace, scope.difficulty);
+
+                scope.minThreshold = threshold[scope.difficulty];
 
                 scope.newTarget = function () {
                     scope.targetColor = generateTarget(scope.palette, scope.colorSpace, scope.difficulty);
+                    scope.mixedColor.resetColors();
+                    scope.minThreshold = threshold[scope.difficulty];
                 };
 
                 scope.$watch('palette.length', function () {
                     scope.targetColor = generateTarget(scope.palette, scope.colorSpace, scope.difficulty);
+                    scope.mixedColor.resetColors();
                 });
 
                 scope.$watch('difficulty', function (value) {
                     scope.targetColor = generateTarget(scope.palette, scope.colorSpace, scope.difficulty);
-                })
+                    scope.mixedColor.resetColors();
+                });
+
+                scope.score = function () {
+                    if (!scope.targetColor) return '-';
+                    return scope.targetColor.result.percMatch(scope.mixedColor.result) * 100;
+                }
             }
         }
     }
