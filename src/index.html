@@ -25,23 +25,44 @@
             <md-tab-label>Pick Palette</md-tab-label>
             <md-tab-body>
                 <md-content layout="column" layout-padding layout-fill>
-                    <div layout="row">
-                        <palette-display layout="row" layout-align="start center" title="'Current Palette'"
-                                         palette="currentPalette" editable="'true'"></palette-display>
+                    <!--<div layout="row">-->
+                    <md-input-container style="width: 7em">
+                        <label>Color Space</label>
                         <md-select ng-model="currentColorSpace">
                             <md-option value="additive"> Additive</md-option>
                             <md-option value="subtractive"> Subtractive</md-option>
                         </md-select>
+                    </md-input-container>
+                    <palette-display style="min-height: 80px;" layout="row" layout-align="start center"
+                                     title="'Current Palette'" palette="currentPalette"
+                                     editable="'true'"></palette-display>
+                    <div layout="row" flex layout-margin layout-padding>
+                        <!--</div>-->
+                        <div class="md-whiteframe-1dp">
+                            <md-toolbar layout="row">
+                                <div class="md-toolbar-tools">
+                                    <span>Custom Color</span>
+                                </div>
+                            </md-toolbar>
+                            <color-picker layout="column" color-space="currentColorSpace"
+                                          save-color='addColorToPalette(color)'></color-picker>
+                        </div>
+                        <div class="md-whiteframe-1dp" flex>
+                            <md-toolbar layout="row">
+                                <div class="md-toolbar-tools">
+                                    <span>Preset Palettes</span>
+                                </div>
+                            </md-toolbar>
+                            <md-list>
+                                <md-list-item ng-repeat="paletteContainer in premadePalettes"
+                                              ng-click="selectPremadePalette($index)">
+                                    <palette-display layout="row" layout-align="start center"
+                                                     title="paletteContainer.name"
+                                                     palette="paletteContainer.palette"></palette-display>
+                                </md-list-item>
+                            </md-list>
+                        </div>
                     </div>
-                    <color-picker layout="column" color-space="currentColorSpace"
-                                  save-color='addColorToPalette(color)'></color-picker>
-                    <md-list flex>
-                        <md-list-item ng-repeat="paletteContainer in premadePalettes"
-                                      ng-click="selectPremadePalette($index)">
-                            <palette-display layout="row" layout-align="start center" title="paletteContainer.name"
-                                             palette="paletteContainer.palette"></palette-display>
-                        </md-list-item>
-                    </md-list>
                 </md-content>
             </md-tab-body>
         </md-tab>
@@ -53,7 +74,7 @@
             </md-tab-body>
         </md-tab>
         <md-tab id="game" ng-disabled="!currentPalette.length">
-            <md-tab-label>Game</md-tab-label>
+            <md-tab-label>Matching Game</md-tab-label>
             <md-tab-body>
                 <div layout="column" layout-padding layout-fill>
                     <mixing-game flex layout="column" palette="currentPalette" color-space="currentColorSpace"

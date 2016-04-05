@@ -216,8 +216,9 @@
                 saveColor: '&'
             },
             template: function () {
-                return "<div>Color Picker</div>" +
-                    "<div class='md-whiteframe-2dp large color-bubble' style='background-color: {{color.hex}}'></div>" +
+                return "<div layout='row' layout-align='begin center'>Color Picker" +
+                    "   <div class='md-whiteframe-2dp large color-bubble' style='background-color: {{color.hex}}'></div>" +
+                    "</div>" +
                     "<div ng-show='colorSpace === \"additive\"' layout='row'>" +
                     "   <md-input-container flex> " +
                     "       <label>Red</label> <input ng-model='color.red' type='number' min='0' max='255' step='5'> " +
@@ -271,9 +272,10 @@
                 editable: '=?'
             },
             template: function () {
-                return "<span>{{ title }}:</span>" +
+                return "<span style='margin-right: .5em;'>{{ title }}:</span>" +
                     "<div ng-hide='editable' class='color-bubble md-whiteframe-2dp' style='background-color: {{ color.hex }}'" +
                     "ng-repeat='color in palette'></div>" +
+                    // "<div ng-hide='palette.length' class='color-bubble md-whiteframe-2dp' ></div>" +
                     "<md-button ng-show='editable' ng-repeat='color in palette' ng-click='remove($index)' " +
                     "class='md-fab color-bubble' style='background-color: {{ color.hex }}'>" +
                     "<md-icon class='material-icons'>remove</md-icon>" +
